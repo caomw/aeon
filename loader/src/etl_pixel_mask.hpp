@@ -31,12 +31,12 @@ namespace nervana {
     // Extract
     //-------------------------------------------------------------------------
 
-    class pixel_mask::extractor : public interface::extractor<image::decoded>
+    class pixel_mask::extractor : public interface::extractor<image_crop::decoded>
     {
     public:
-        extractor(const image::config&);
+        extractor(const image_crop::config&);
         virtual ~extractor();
-        virtual std::shared_ptr<image::decoded> extract(const char*, int) override;
+        virtual std::shared_ptr<image_crop::decoded> extract(const char*, int) override;
     private:
     };
 
@@ -44,19 +44,19 @@ namespace nervana {
     // Transform
     //-------------------------------------------------------------------------
 
-    class pixel_mask::transformer : public interface::transformer<image::decoded, image::params>
+    class pixel_mask::transformer : public interface::transformer<image_crop::decoded, image_crop::params>
     {
     public:
-        transformer(const image::config&);
+        transformer(const image_crop::config&);
         ~transformer();
-        std::shared_ptr<image::decoded> transform(
-                            std::shared_ptr<image::params> txs,
-                            std::shared_ptr<image::decoded> mp) override;
+        std::shared_ptr<image_crop::decoded> transform(
+                            std::shared_ptr<image_crop::params> txs,
+                            std::shared_ptr<image_crop::decoded> mp) override;
     };
 
     //-------------------------------------------------------------------------
     // Load
     //-------------------------------------------------------------------------
 
-    // use image::loader
+    // use image_crop::loader
 }

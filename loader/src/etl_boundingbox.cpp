@@ -169,7 +169,7 @@ vector<boundingbox::box> boundingbox::transformer::transform_box(
     return rc;
 }
 
-shared_ptr<boundingbox::decoded> boundingbox::transformer::transform(shared_ptr<image::params> pptr, shared_ptr<boundingbox::decoded> boxes) {
+shared_ptr<boundingbox::decoded> boundingbox::transformer::transform(shared_ptr<image_crop::params> pptr, shared_ptr<boundingbox::decoded> boxes) {
     if( pptr->angle != 0 ) {
         return shared_ptr<boundingbox::decoded>();
     }

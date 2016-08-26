@@ -29,7 +29,7 @@ namespace nervana {
     class video::config : public interface::config {
     public:
         uint32_t                              max_frame_count;
-        nervana::image::config                frame;
+        nervana::image_crop::config           frame;
 
         config(nlohmann::json js) :
         frame(js["frame"])
@@ -56,37 +56,37 @@ namespace nervana {
         };
     };
 
-    class video::extractor : public interface::extractor<image::decoded> {
+    class video::extractor : public interface::extractor<image_crop::decoded> {
     public:
         extractor(const video::config&) {}
         virtual ~extractor() {}
 
-        virtual std::shared_ptr<image::decoded> extract(const char* item, int itemSize) override;
+        virtual std::shared_ptr<image_crop::decoded> extract(const char* item, int itemSize) override;
 
     protected:
     private:
         extractor() = delete;
     };
 
-    // simple wrapper around image::transformer for now
-    class video::transformer : public interface::transformer<image::decoded, image::params> {
+    // simple wrapper around image_crop::transformer for now
+    class video::transformer : public interface::transformer<image_crop::decoded, image_crop::params> {
     public:
         transformer(const video::config&);
         virtual ~transformer() {}
-        virtual std::shared_ptr<image::decoded> transform(
-                                                std::shared_ptr<image::params>,
-                                                std::shared_ptr<image::decoded>) override;
+        virtual std::shared_ptr<image_crop::decoded> transform(
+                                                std::shared_ptr<image_crop::params>,
+                                                std::shared_ptr<image_crop::decoded>) override;
     protected:
         transformer() = delete;
-        image::transformer frame_transformer;
+        image_crop::transformer frame_transformer;
         uint32_t max_frame_count;
     };
 
-    class video::loader : public interface::loader<image::decoded> {
+    class video::loader : public interface::loader<image_crop::decoded> {
     public:
         loader(const video::config& cfg) {}
         virtual ~loader() {}
-        virtual void load(const std::vector<void*>&, std::shared_ptr<image::decoded>) override;
+        virtual void load(const std::vector<void*>&, std::shared_ptr<image_crop::decoded>) override;
 
     private:
         loader() = delete;

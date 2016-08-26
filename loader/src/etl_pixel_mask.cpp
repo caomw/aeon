@@ -18,7 +18,7 @@
 using namespace std;
 using namespace nervana;
 
-pixel_mask::extractor::extractor(const image::config& config)
+pixel_mask::extractor::extractor(const image_crop::config& config)
 {
 }
 
@@ -26,7 +26,7 @@ pixel_mask::extractor::~extractor()
 {
 }
 
-shared_ptr<image::decoded> pixel_mask::extractor::extract(const char* inbuf, int insize)
+shared_ptr<image_crop::decoded> pixel_mask::extractor::extract(const char* inbuf, int insize)
 {
     cv::Mat image;
 
@@ -46,10 +46,10 @@ shared_ptr<image::decoded> pixel_mask::extractor::extract(const char* inbuf, int
         image = target;
     }
 
-    return make_shared<image::decoded>(image);
+    return make_shared<image_crop::decoded>(image);
 }
 
-pixel_mask::transformer::transformer(const image::config& config)
+pixel_mask::transformer::transformer(const image_crop::config& config)
 {
 }
 
@@ -57,9 +57,9 @@ pixel_mask::transformer::~transformer()
 {
 }
 
-std::shared_ptr<image::decoded> pixel_mask::transformer::transform(
-                    std::shared_ptr<image::params> img_xform,
-                    std::shared_ptr<image::decoded> image_list)
+std::shared_ptr<image_crop::decoded> pixel_mask::transformer::transform(
+                    std::shared_ptr<image_crop::params> img_xform,
+                    std::shared_ptr<image_crop::decoded> image_list)
 {
     if(image_list->get_image_count() != 1) throw invalid_argument("pixel_mask transform only supports a single image");
 
@@ -79,5 +79,5 @@ std::shared_ptr<image::decoded> pixel_mask::transformer::transform(
         finalImage = &flippedImage;
     }
 
-    return make_shared<image::decoded>(*finalImage);
+    return make_shared<image_crop::decoded>(*finalImage);
 }

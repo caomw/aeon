@@ -30,7 +30,7 @@ namespace nervana {
         video::extractor            video_extractor;
         video::transformer          video_transformer;
         video::loader               video_loader;
-        image::param_factory        frame_factory;
+        image_crop::param_factory   frame_factory;
 
         label::config               label_config;
         label::extractor            label_extractor;

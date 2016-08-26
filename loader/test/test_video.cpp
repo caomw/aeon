@@ -61,7 +61,7 @@ TEST(video,extract_transform) {
         // transform
         video::transformer transformer = video::transformer(config);
 
-        image::param_factory factory(config.frame);
+        image_crop::param_factory factory(config.frame);
         auto params = factory.make_params(decoded_vid);
 
         params->output_size = cv::Size2i(width/2, height/2);
@@ -88,16 +88,16 @@ TEST(video,image_transform) {
     int width = 352;
     int height = 288;
 
-    auto decoded_image = make_shared<image::decoded>();
+    auto decoded_image = make_shared<image_crop::decoded>();
     cv::Mat mat_image(height, width, CV_8UC3, 0.0);
     decoded_image->add(mat_image);
 
     nlohmann::json js = {{"width", width},{"height",height}};
-    image::config config(js);
+    image_crop::config config(js);
 
-    image::transformer _imageTransformer(config);
+    image_crop::transformer _imageTransformer(config);
 
-    image::param_factory factory(config);
+    image_crop::param_factory factory(config);
     auto imageParams = factory.make_params(decoded_image);
     imageParams->output_size = cv::Size2i(width/2, height/2);
 
@@ -134,7 +134,7 @@ TEST(video,loader) {
                                                      vconfig.frame.width,
                                                      vconfig.max_frame_count);
 
-    auto decoded_vid = make_shared<image::decoded>();
+    auto decoded_vid = make_shared<image_crop::decoded>();
 
     for(int d = 0; d < depth; ++d) {
         cv::Mat image(height, width, CV_8UC3, 0.0);

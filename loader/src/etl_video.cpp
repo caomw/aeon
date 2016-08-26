@@ -19,7 +19,7 @@
 using namespace std;
 using namespace nervana;
 
-std::shared_ptr<image::decoded> video::extractor::extract(const char* item, int itemSize)
+std::shared_ptr<image_crop::decoded> video::extractor::extract(const char* item, int itemSize)
 {
     // Very bad -- need to circle back and make an imemstream so we don't have to strip
     // constness from item
@@ -29,7 +29,7 @@ std::shared_ptr<image::decoded> video::extractor::extract(const char* item, int 
     if (!mjdecoder->isOpened()) {
         return nullptr;
     }
-    auto out_img = make_shared<image::decoded>();
+    auto out_img = make_shared<image_crop::decoded>();
     cv::Mat image;
     while(mjdecoder->grabFrame() && mjdecoder->retrieveFrame(0,image)) {
         out_img->add(image.clone());
@@ -42,12 +42,12 @@ video::transformer::transformer(const video::config& config)
    max_frame_count(config.max_frame_count)
 {}
 
-std::shared_ptr<image::decoded> video::transformer::transform(
-    std::shared_ptr<image::params> img_xform,
-    std::shared_ptr<image::decoded> img)
+std::shared_ptr<image_crop::decoded> video::transformer::transform(
+    std::shared_ptr<image_crop::params> img_xform,
+    std::shared_ptr<image_crop::decoded> img)
 {
     auto tx_img = frame_transformer.transform(img_xform, img);
-    auto out_img = make_shared<image::decoded>();
+    auto out_img = make_shared<image_crop::decoded>();
 
     uint32_t nframes = std::min<int>(max_frame_count, tx_img->get_image_count());
 
@@ -66,7 +66,7 @@ std::shared_ptr<image::decoded> video::transformer::transform(
     return out_img;
 }
 
-void video::loader::load(const vector<void*>& buflist, shared_ptr<image::decoded> input)
+void video::loader::load(const vector<void*>& buflist, shared_ptr<image_crop::decoded> input)
 {
     char* outbuf = (char*)buflist[0];
     // loads in channel x depth(frame) x height x width

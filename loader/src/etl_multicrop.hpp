@@ -33,7 +33,7 @@ namespace nervana {
     public:
         // Required config variables
         std::vector<float>          crop_scales;
-        nervana::image::config      crop_config;
+        nervana::image_crop::config      crop_config;
 
         // Optional config variables
         int                         num_crops = 5;
@@ -57,15 +57,15 @@ namespace nervana {
         void validate();
     };
 
-    class multicrop::transformer : public interface::transformer<image::decoded, image::params> {
+    class multicrop::transformer : public interface::transformer<image_crop::decoded, image_crop::params> {
     public:
         transformer(const multicrop::config& cfg);
         ~transformer() {}
-        virtual std::shared_ptr<image::decoded> transform(
-                                                std::shared_ptr<image::params>,
-                                                std::shared_ptr<image::decoded>) override;
+        virtual std::shared_ptr<image_crop::decoded> transform(
+                                                std::shared_ptr<image_crop::params>,
+                                                std::shared_ptr<image_crop::decoded>) override;
     private:
-        image::transformer       _crop_transformer;
+        image_crop::transformer  _crop_transformer;
         std::vector<float>       _crop_scales;
         std::vector<bool>        _orientations;
 

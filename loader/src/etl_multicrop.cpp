@@ -77,9 +77,9 @@ multicrop::transformer::transformer(const multicrop::config& cfg)
     }
 }
 
-shared_ptr<image::decoded> multicrop::transformer::transform(
-                                                shared_ptr<image::params> crop_settings,
-                                                shared_ptr<image::decoded> input)
+shared_ptr<image_crop::decoded> multicrop::transformer::transform(
+                                                shared_ptr<image_crop::params> crop_settings,
+                                                shared_ptr<image_crop::decoded> input)
 {
     cv::Size2i in_size = input->get_image_size();
     auto cropbox_size = image::cropbox_max_proportional(in_size, crop_settings->output_size);
@@ -95,7 +95,7 @@ shared_ptr<image::decoded> multicrop::transformer::transform(
         }
     }
 
-    auto out_imgs = make_shared<image::decoded>();
+    auto out_imgs = make_shared<image_crop::decoded>();
 
     for (auto cropbox: cropboxes) {
         crop_settings->cropbox = cropbox;

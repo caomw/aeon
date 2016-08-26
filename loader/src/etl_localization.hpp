@@ -75,8 +75,8 @@ namespace nervana {
     class localization::config : public nervana::interface::config {
     public:
         size_t                      rois_per_image = 256;
-        size_t                      min_size;   // copied from image_var config
-        size_t                      max_size;   // copied from image_var config
+        size_t                      min_size;   // copied from image_full config
+        size_t                      max_size;   // copied from image_full config
         size_t                      base_size = 16;
         float                       scaling_factor = 1.0 / 16.;
         std::vector<float>          ratios = {0.5, 1, 2};
@@ -92,7 +92,7 @@ namespace nervana {
         size_t output_buffer_size;
         std::unordered_map<std::string,int> label_map;
 
-        config(nlohmann::json js, const image_var::config& iconfig);
+        config(nlohmann::json js, const image_full::config& iconfig);
 
         size_t total_anchors() const
         {
@@ -151,14 +151,14 @@ namespace nervana {
         boundingbox::extractor bbox_extractor;
     };
 
-    class localization::transformer : public interface::transformer<localization::decoded, image_var::params> {
+    class localization::transformer : public interface::transformer<localization::decoded, image_full::params> {
     public:
         transformer(const localization::config&);
 
         virtual ~transformer() {}
 
         std::shared_ptr<localization::decoded> transform(
-                            std::shared_ptr<image_var::params> txs,
+                            std::shared_ptr<image_full::params> txs,
                             std::shared_ptr<localization::decoded> mp) override;
     private:
         transformer() = delete;

@@ -46,16 +46,16 @@ static cv::Mat generate_indexed_image() {
     return color;
 }
 
-TEST(image_var, decoded_image) {
+TEST(image_full, decoded_image) {
     cv::Mat img1 = cv::Mat( 256, 256, CV_8UC3 );
 
-    image_var::decoded decoded(img1);
+    image_full::decoded decoded(img1);
 }
 
-TEST(image_var, image_config) {
+TEST(image_full, image_config) {
     nlohmann::json js = {{"min_size",300},{"max_size",400},{"channels",3},{"flip_enable", false}};
 
-    image_var::config config(js);
+    image_full::config config(js);
     EXPECT_EQ(300,config.min_size);
     EXPECT_EQ(400,config.max_size);
     EXPECT_TRUE(config.channel_major);
@@ -64,55 +64,55 @@ TEST(image_var, image_config) {
     EXPECT_FLOAT_EQ(0.0,config.flip_distribution.p());
 }
 
-static bool check_value(shared_ptr<image_var::decoded> transformed, int x0, int y0, int x1, int y1) {
+static bool check_value(shared_ptr<image_full::decoded> transformed, int x0, int y0, int x1, int y1) {
     cv::Mat image = transformed->get_image();
     cv::Vec3b value = image.at<cv::Vec3b>(y0,x0); // row,col
     return x1 == (int)value[0] && y1 == (int)value[1];
 }
 
-TEST(image_var, resize) {
+TEST(image_full, resize) {
     auto mat = cv::Mat(200,300,CV_8UC3);
     vector<unsigned char> img;
     cv::imencode( ".png", mat, img );
 
     nlohmann::json jsConfig = {{"min_size",300},{"max_size",400},{"channels",3},{"flip_enable", false}};
 
-    image_var::config config_ptr{jsConfig};
+    image_full::config config_ptr{jsConfig};
 
-    image_var::extractor ext{config_ptr};
-    shared_ptr<image_var::decoded> decoded = ext.extract((char*)&img[0], img.size());
+    image_full::extractor ext{config_ptr};
+    shared_ptr<image_full::decoded> decoded = ext.extract((char*)&img[0], img.size());
 
-    image_var::param_factory factory(config_ptr);
+    image_full::param_factory factory(config_ptr);
 
-    shared_ptr<image_var::params> params_ptr = make_shared<image_var::params>();
+    shared_ptr<image_full::params> params_ptr = make_shared<image_full::params>();
 
-    image_var::transformer trans{config_ptr};
-    shared_ptr<image_var::decoded> transformed = trans.transform(params_ptr, decoded);
+    image_full::transformer trans{config_ptr};
+    shared_ptr<image_full::decoded> transformed = trans.transform(params_ptr, decoded);
 
     cv::Mat image = transformed->get_image();
     EXPECT_EQ(400,image.size().width);
     EXPECT_EQ(267,image.size().height);
 }
 
-TEST(image_var, transform_flip) {
+TEST(image_full, transform_flip) {
     auto indexed = generate_indexed_image();
     vector<unsigned char> img;
     cv::imencode( ".png", indexed, img );
     nlohmann::json jsConfig = {{"min_size",256},{"max_size",256},{"channels",3},{"flip_enable", false}};
 
-    image_var::config config_ptr{jsConfig};
+    image_full::config config_ptr{jsConfig};
 
-    image_var::extractor ext{config_ptr};
-    shared_ptr<image_var::decoded> decoded = ext.extract((char*)&img[0], img.size());
+    image_full::extractor ext{config_ptr};
+    shared_ptr<image_full::decoded> decoded = ext.extract((char*)&img[0], img.size());
 
     std::default_random_engine dre;
-    image_var::param_factory factory(config_ptr);
+    image_full::param_factory factory(config_ptr);
 
-    shared_ptr<image_var::params> params_ptr = make_shared<image_var::params>();
+    shared_ptr<image_full::params> params_ptr = make_shared<image_full::params>();
     params_ptr->flip = true;
 
-    image_var::transformer trans{config_ptr};
-    shared_ptr<image_var::decoded> transformed = trans.transform(params_ptr, decoded);
+    image_full::transformer trans{config_ptr};
+    shared_ptr<image_full::decoded> transformed = trans.transform(params_ptr, decoded);
 
     cv::Mat image = transformed->get_image();
     EXPECT_EQ(256,image.size().width);

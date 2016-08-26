@@ -47,13 +47,13 @@ static string read_file( const string& path )
     return ss.str();
 }
 
-static image_var::config make_image_var_config(int min_size=600, int max_size=1000)
+static image_full::config make_image_var_config(int min_size=600, int max_size=1000)
 {
     nlohmann::json ijs = {{"min_size",min_size},{"max_size",max_size},{"channels",3},{"flip_enable", false}};
-    return image_var::config{ijs};
+    return image_full::config{ijs};
 }
 
-static localization::config make_localization_config(const image_var::config& icfg)
+static localization::config make_localization_config(const image_full::config& icfg)
 {
     nlohmann::json js = {{"labels",label_list},{"max_gt_boxes",64}};
     return localization::config(js, icfg);
@@ -149,7 +149,7 @@ void plot(const string& path)
     localization::transformer transformer{cfg};
     auto extracted_metadata = extractor.extract(&data[0],data.size());
     ASSERT_NE(nullptr,extracted_metadata);
-    auto params = make_shared<image_var::params>();
+    auto params = make_shared<image_full::params>();
     shared_ptr<localization::decoded> transformed_metadata = transformer.transform(params, extracted_metadata);
 
     const vector<box>& an = transformer.all_anchors;
@@ -229,7 +229,7 @@ TEST(localization,config)
 {
     nlohmann::json ijs = {{"min_size",300},{"max_size",400},{"channels",3},{"flip_enable", false}};
     nlohmann::json js = {{"labels",label_list},{"max_gt_boxes",100}};
-    image_var::config icfg{ijs};
+    image_full::config icfg{ijs};
 
     EXPECT_NO_THROW(localization::config cfg(js, icfg));
 }
@@ -242,7 +242,7 @@ TEST(localization, sample_anchors)
     localization::transformer transformer{cfg};
     auto extracted_metadata = extractor.extract(&data[0],data.size());
     ASSERT_NE(nullptr,extracted_metadata);
-    shared_ptr<image_var::params> params = make_shared<image_var::params>();
+    shared_ptr<image_full::params> params = make_shared<image_full::params>();
     nlohmann::json js = nlohmann::json::parse(data);
     params->output_size.width = js["size"]["width"];
     params->output_size.height = js["size"]["height"];
@@ -280,7 +280,7 @@ TEST(localization, transform_scale)
     localization::transformer transformer{cfg};
     auto decoded_data = extractor.extract(&data[0],data.size());
     ASSERT_NE(nullptr,decoded_data);
-    shared_ptr<image_var::params> params = make_shared<image_var::params>();
+    shared_ptr<image_full::params> params = make_shared<image_full::params>();
     params->debug_deterministic = true;
     nlohmann::json js = nlohmann::json::parse(data);
     params->output_size.width = js["size"]["width"];
@@ -315,7 +315,7 @@ TEST(localization, transform_flip)
     localization::transformer transformer{cfg};
     auto decoded_data = extractor.extract(&data[0],data.size());
     ASSERT_NE(nullptr,decoded_data);
-    shared_ptr<image_var::params> params = make_shared<image_var::params>();
+    shared_ptr<image_full::params> params = make_shared<image_full::params>();
     params->debug_deterministic = true;
     params->flip = 1;
     params->output_size = output_size;
@@ -353,10 +353,10 @@ TEST(DISABLE_localization, transform_crop)
 
     auto image_config = make_image_var_config(600,600);
     auto cfg = make_localization_config(image_config);
-    image_var::param_factory factory{image_config};
-    image_var::extractor image_extractor{image_config};
-    shared_ptr<image_var::decoded> image_decoded = image_extractor.extract((const char*)test_image_data.data(), test_image_data.size());
-    shared_ptr<image_var::params> params = factory.make_params(image_decoded);
+    image_full::param_factory factory{image_config};
+    image_full::extractor image_extractor{image_config};
+    shared_ptr<image_full::decoded> image_decoded = image_extractor.extract((const char*)test_image_data.data(), test_image_data.size());
+    shared_ptr<image_full::params> params = factory.make_params(image_decoded);
     params->flip = 1;
 
     localization::extractor extractor{cfg};
@@ -766,7 +766,7 @@ TEST(localization, loader)
     localization::loader loader{cfg};
     auto extract_data = extractor.extract(&data[0],data.size());
     ASSERT_NE(nullptr,extract_data);
-    auto params = make_shared<image_var::params>();
+    auto params = make_shared<image_full::params>();
     params->debug_deterministic = true;
     nlohmann::json js = nlohmann::json::parse(data);
     params->output_size.width = js["size"]["width"];

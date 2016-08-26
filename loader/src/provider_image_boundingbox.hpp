@@ -28,13 +28,13 @@ namespace nervana {
         void provide(int idx, buffer_in_array& in_buf, buffer_out_array& out_buf);
     private:
         image_boundingbox() = delete;
-        image::config               image_config;
+        image_crop::config          image_config;
         boundingbox::config         bbox_config;
 
-        image::extractor            image_extractor;
-        image::transformer          image_transformer;
-        image::loader               image_loader;
-        image::param_factory        image_factory;
+        image_crop::extractor       image_extractor;
+        image_crop::transformer     image_transformer;
+        image_crop::loader          image_loader;
+        image_crop::param_factory   image_factory;
 
         boundingbox::extractor      bbox_extractor;
         boundingbox::transformer    bbox_transformer;

@@ -59,10 +59,10 @@ void test_image(vector<unsigned char>& img, int channels) {
         {"flip_enable",false}
     };
 
-    image::config itpj(js);
+    image_crop::config itpj(js);
 
-    image::extractor ext{itpj};
-    shared_ptr<image::decoded> decoded = ext.extract((char*)&img[0], img.size());
+    image_crop::extractor ext{itpj};
+    shared_ptr<image_crop::decoded> decoded = ext.extract((char*)&img[0], img.size());
 
     ASSERT_NE(nullptr,decoded);
     EXPECT_EQ(1,decoded->get_image_count());
@@ -104,17 +104,17 @@ TEST(image,passthrough) {
     cv::imencode( ".png", test_image, image_data );
 
     nlohmann::json js = {{"width", 512},{"height",256}};
-    image::config cfg(js);
+    image_crop::config cfg(js);
 
-    image::extractor ext{cfg};
-    shared_ptr<image::decoded> decoded = ext.extract((char*)&image_data[0], image_data.size());
+    image_crop::extractor ext{cfg};
+    shared_ptr<image_crop::decoded> decoded = ext.extract((char*)&image_data[0], image_data.size());
 
-    image::param_factory factory(cfg);
+    image_crop::param_factory factory(cfg);
 
-    shared_ptr<image::params> params_ptr = factory.make_params(decoded);
+    shared_ptr<image_crop::params> params_ptr = factory.make_params(decoded);
 
-    image::transformer trans{cfg};
-    shared_ptr<image::decoded> transformed = trans.transform(params_ptr, decoded);
+    image_crop::transformer trans{cfg};
+    shared_ptr<image_crop::decoded> transformed = trans.transform(params_ptr, decoded);
 
     cv::Mat image = transformed->get_image(0);
 
@@ -146,7 +146,7 @@ TEST(image, decoded) {
     vector<cv::Mat> v1{ img1, img2, img3 };
     vector<cv::Mat> v2{ img4 };
 
-    image::decoded decoded;
+    image_crop::decoded decoded;
     EXPECT_TRUE(decoded.add(img1));
     EXPECT_TRUE(decoded.add(img2));
     EXPECT_TRUE(decoded.add(img3));
@@ -166,7 +166,7 @@ TEST(image, missing_config_arg) {
         {"flip_enable",false}
     };
 
-    EXPECT_THROW(image::config itpj(js), std::invalid_argument);
+    EXPECT_THROW(image_crop::config itpj(js), std::invalid_argument);
 }
 
 TEST(image, config) {
@@ -181,7 +181,7 @@ TEST(image, config) {
         {"flip_enable",false}
     };
 
-    image::config config(js);
+    image_crop::config config(js);
     EXPECT_EQ(30,config.height);
     EXPECT_EQ(30,config.width);
     EXPECT_FALSE(config.do_area_scale);
@@ -241,7 +241,7 @@ TEST(image,extract4) {
     test_image( png, 1 );
 }
 
-bool check_value(shared_ptr<image::decoded> transformed, int x0, int y0, int x1, int y1, int ii=0) {
+bool check_value(shared_ptr<image_crop::decoded> transformed, int x0, int y0, int x1, int y1, int ii=0) {
     cv::Mat image = transformed->get_image(ii);
     cv::Vec3b value = image.at<cv::Vec3b>(y0,x0); // row,col
     return x1 == (int)value[0] && y1 == (int)value[1];
@@ -253,18 +253,18 @@ TEST(image,transform_crop) {
     cv::imencode( ".png", indexed, img );
 
     nlohmann::json js = {{"width", 256},{"height",256}};
-    image::config cfg(js);
+    image_crop::config cfg(js);
 
-    image::extractor ext{cfg};
-    shared_ptr<image::decoded> decoded = ext.extract((char*)&img[0], img.size());
+    image_crop::extractor ext{cfg};
+    shared_ptr<image_crop::decoded> decoded = ext.extract((char*)&img[0], img.size());
 
-    image::param_factory factory(cfg);
+    image_crop::param_factory factory(cfg);
 
     image_params_builder builder(factory.make_params(decoded));
-    shared_ptr<image::params> params_ptr = builder.cropbox( 100, 150, 20, 30 ).output_size(20, 30);
+    shared_ptr<image_crop::params> params_ptr = builder.cropbox( 100, 150, 20, 30 ).output_size(20, 30);
 
-    image::transformer trans{cfg};
-    shared_ptr<image::decoded> transformed = trans.transform(params_ptr, decoded);
+    image_crop::transformer trans{cfg};
+    shared_ptr<image_crop::decoded> transformed = trans.transform(params_ptr, decoded);
 
     cv::Mat image = transformed->get_image(0);
     EXPECT_EQ(20,image.size().width);
@@ -281,18 +281,18 @@ TEST(image,transform_flip) {
     cv::imencode( ".png", indexed, img );
 
     nlohmann::json js = {{"width", 256},{"height",256}};
-    image::config cfg(js);
+    image_crop::config cfg(js);
 
-    image::extractor ext{cfg};
-    shared_ptr<image::decoded> decoded = ext.extract((char*)&img[0], img.size());
+    image_crop::extractor ext{cfg};
+    shared_ptr<image_crop::decoded> decoded = ext.extract((char*)&img[0], img.size());
 
-    image::param_factory factory(cfg);
+    image_crop::param_factory factory(cfg);
 
     image_params_builder builder(factory.make_params(decoded));
-    shared_ptr<image::params> params_ptr = builder.cropbox( 100, 150, 20, 20 ).output_size(20, 20).flip(true);
+    shared_ptr<image_crop::params> params_ptr = builder.cropbox( 100, 150, 20, 20 ).output_size(20, 20).flip(true);
 
-    image::transformer trans{cfg};
-    shared_ptr<image::decoded> transformed = trans.transform(params_ptr, decoded);
+    image_crop::transformer trans{cfg};
+    shared_ptr<image_crop::decoded> transformed = trans.transform(params_ptr, decoded);
 
     cv::Mat image = transformed->get_image(0);
     EXPECT_EQ(20,image.size().width);
@@ -311,7 +311,7 @@ TEST(image,noconvert_nosplit) {
         {"channel_major", false},
         {"type_string", "uint8_t"}
     };
-    image::config cfg(js);
+    image_crop::config cfg(js);
 
     cv::Mat input_image(100, 100, CV_8UC3);
     input_image = cv::Scalar(50, 100, 200);
@@ -320,10 +320,10 @@ TEST(image,noconvert_nosplit) {
     vector<unsigned char> image_data;
     cv::imencode(".png", input_image, image_data);
 
-    image::extractor ext{cfg};
-    shared_ptr<image::decoded> decoded = ext.extract((char*)&image_data[0], image_data.size());
+    image_crop::extractor ext{cfg};
+    shared_ptr<image_crop::decoded> decoded = ext.extract((char*)&image_data[0], image_data.size());
 
-    image::loader loader(cfg);
+    image_crop::loader loader(cfg);
     loader.load({output_image.data}, decoded);
 
 //    cv::imwrite("image_noconvert_nosplit.png", output_image);
@@ -346,7 +346,7 @@ TEST(image,noconvert_split) {
         {"channel_major", true},
         {"type_string", "uint8_t"}
     };
-    image::config cfg(js);
+    image_crop::config cfg(js);
 
     cv::Mat input_image(100, 100, CV_8UC3);
     input_image = cv::Scalar(50, 100, 150);
@@ -355,10 +355,10 @@ TEST(image,noconvert_split) {
     vector<unsigned char> image_data;
     cv::imencode(".png", input_image, image_data);
 
-    image::extractor ext{cfg};
-    shared_ptr<image::decoded> decoded = ext.extract((char*)&image_data[0], image_data.size());
+    image_crop::extractor ext{cfg};
+    shared_ptr<image_crop::decoded> decoded = ext.extract((char*)&image_data[0], image_data.size());
 
-    image::loader loader(cfg);
+    image_crop::loader loader(cfg);
     loader.load({output_image.data}, decoded);
 
 //    cv::imwrite("image_noconvert_split.png", output_image);
@@ -381,7 +381,7 @@ TEST(image,convert_nosplit) {
         {"channel_major", false},
         {"type_string", "uint32_t"}
     };
-    image::config cfg(js);
+    image_crop::config cfg(js);
 
     cv::Mat input_image(100, 100, CV_8UC3);
     input_image = cv::Scalar(50, 100, 200);
@@ -390,10 +390,10 @@ TEST(image,convert_nosplit) {
     vector<unsigned char> image_data;
     cv::imencode(".png", input_image, image_data);
 
-    image::extractor ext{cfg};
-    shared_ptr<image::decoded> decoded = ext.extract((char*)&image_data[0], image_data.size());
+    image_crop::extractor ext{cfg};
+    shared_ptr<image_crop::decoded> decoded = ext.extract((char*)&image_data[0], image_data.size());
 
-    image::loader loader(cfg);
+    image_crop::loader loader(cfg);
     loader.load({output_image.data}, decoded);
 
 //    cv::imwrite("image_convert_nosplit.png", output_image);
@@ -416,7 +416,7 @@ TEST(image,convert_split) {
         {"channel_major", true},
         {"type_string", "uint32_t"}
     };
-    image::config cfg(js);
+    image_crop::config cfg(js);
 
     cv::Mat input_image(100, 100, CV_8UC3);
     input_image = cv::Scalar(50, 100, 150);
@@ -425,10 +425,10 @@ TEST(image,convert_split) {
     vector<unsigned char> image_data;
     cv::imencode(".png", input_image, image_data);
 
-    image::extractor ext{cfg};
-    shared_ptr<image::decoded> decoded = ext.extract((char*)&image_data[0], image_data.size());
+    image_crop::extractor ext{cfg};
+    shared_ptr<image_crop::decoded> decoded = ext.extract((char*)&image_data[0], image_data.size());
 
-    image::loader loader(cfg);
+    image_crop::loader loader(cfg);
     loader.load({output_image.data}, decoded);
 
 //    cv::imwrite("image_convert_split.png", output_image);
@@ -449,10 +449,10 @@ TEST(image, multi_crop) {
     cv::imencode( ".png", indexed, img );
 
     nlohmann::json exjs = {{"width", 256},{"height",256}};
-    image::config cfg(exjs);
+    image_crop::config cfg(exjs);
 
-    image::extractor ext{cfg};
-    shared_ptr<image::decoded> decoded = ext.extract((char*)&img[0], img.size());
+    image_crop::extractor ext{cfg};
+    shared_ptr<image_crop::decoded> decoded = ext.extract((char*)&img[0], img.size());
 
 
 
@@ -470,11 +470,11 @@ TEST(image, multi_crop) {
         )";
         auto js = nlohmann::json::parse(jsstring);
         multicrop::config mc_config(js);
-        image::param_factory factory(mc_config.crop_config);
-        shared_ptr<image::params> params_ptr = factory.make_params(decoded);
+        image_crop::param_factory factory(mc_config.crop_config);
+        shared_ptr<image_crop::params> params_ptr = factory.make_params(decoded);
 
         multicrop::transformer trans{mc_config};
-        shared_ptr<image::decoded> transformed = trans.transform(params_ptr, decoded);
+        shared_ptr<image_crop::decoded> transformed = trans.transform(params_ptr, decoded);
 
         cv::Mat image = transformed->get_image(0);
 
@@ -504,11 +504,11 @@ TEST(image, multi_crop) {
 
         auto js = nlohmann::json::parse(jsstring);
         multicrop::config mc_config(js);
-        image::param_factory factory(mc_config.crop_config);
-        shared_ptr<image::params> params_ptr = factory.make_params(decoded);
+        image_crop::param_factory factory(mc_config.crop_config);
+        shared_ptr<image_crop::params> params_ptr = factory.make_params(decoded);
 
         multicrop::transformer trans{mc_config};
-        shared_ptr<image::decoded> transformed = trans.transform(params_ptr, decoded);
+        shared_ptr<image_crop::decoded> transformed = trans.transform(params_ptr, decoded);
 
         cv::Mat image = transformed->get_image(0);
         EXPECT_EQ(224,image.size().width);
@@ -540,11 +540,11 @@ TEST(image, multi_crop) {
 
         auto js = nlohmann::json::parse(jsstring);
         multicrop::config mc_config(js);
-        image::param_factory factory(mc_config.crop_config);
-        shared_ptr<image::params> params_ptr = factory.make_params(decoded);
+        image_crop::param_factory factory(mc_config.crop_config);
+        shared_ptr<image_crop::params> params_ptr = factory.make_params(decoded);
 
         multicrop::transformer trans{mc_config};
-        shared_ptr<image::decoded> transformed = trans.transform(params_ptr, decoded);
+        shared_ptr<image_crop::decoded> transformed = trans.transform(params_ptr, decoded);
 
 
         EXPECT_EQ(transformed->get_image_count(), 5);
@@ -637,11 +637,11 @@ TEST(image,transform)
                                 {"flip_enable",false}
                             };
 
-        image::config           cfg{js};
-        image::extractor        extractor{cfg};
-        image::transformer      transformer{cfg};
-        image::loader           loader{cfg};
-        image::param_factory    factory(cfg);
+        image_crop::config           cfg{js};
+        image_crop::extractor        extractor{cfg};
+        image_crop::transformer      transformer{cfg};
+        image_crop::loader           loader{cfg};
+        image_crop::param_factory    factory(cfg);
 
         auto decoded = extractor.extract(image_data.data(), image_data.size());
         auto params = factory.make_params(decoded);
@@ -664,15 +664,15 @@ TEST(image,transform)
                                 {"flip_enable",false}
                             };
 
-        image::config           cfg{js};
-        image::extractor        extractor{cfg};
-        image::transformer      transformer{cfg};
-        image::loader           loader{cfg};
-        image::param_factory    factory(cfg);
+        image_crop::config           cfg{js};
+        image_crop::extractor        extractor{cfg};
+        image_crop::transformer      transformer{cfg};
+        image_crop::loader           loader{cfg};
+        image_crop::param_factory    factory(cfg);
 
         auto decoded = extractor.extract(image_data.data(), image_data.size());
 
-        shared_ptr<image::params> params = factory.make_params(decoded);
+        shared_ptr<image_crop::params> params = factory.make_params(decoded);
         params->flip = true;
 
         auto transformed = transformer.transform(params, decoded);
@@ -697,15 +697,15 @@ TEST(image,transform)
             {"flip_enable",false}
         };
 
-        image::config           cfg{js};
-        image::extractor        extractor{cfg};
-        image::transformer      transformer{cfg};
-        image::loader           loader{cfg};
-        image::param_factory    factory(cfg);
+        image_crop::config           cfg{js};
+        image_crop::extractor        extractor{cfg};
+        image_crop::transformer      transformer{cfg};
+        image_crop::loader           loader{cfg};
+        image_crop::param_factory    factory(cfg);
 
         auto decoded = extractor.extract(image_data.data(), image_data.size());
 
-        shared_ptr<image::params> params = factory.make_params(decoded);
+        shared_ptr<image_crop::params> params = factory.make_params(decoded);
         params->flip = false;
 
         auto transformed = transformer.transform(params, decoded);
@@ -733,7 +733,7 @@ TEST(image,config_bad_scale)
         {"flip_enable",false}
     };
 
-    EXPECT_THROW(image::config{js}, std::invalid_argument);
+    EXPECT_THROW(image_crop::config{js}, std::invalid_argument);
 }
 
 TEST(image,area_scale)
@@ -759,39 +759,39 @@ TEST(image,area_scale)
         };
 
         {
-            image::config           cfg{js};
-            image::extractor        extractor{cfg};
-            image::param_factory    factory(cfg);
+            image_crop::config           cfg{js};
+            image_crop::extractor        extractor{cfg};
+            image_crop::param_factory    factory(cfg);
 
             auto decoded = extractor.extract(image_data.data(), image_data.size());
             source_image_area = decoded->get_image_size().area();
 
-            shared_ptr<image::params> params = factory.make_params(decoded);
+            shared_ptr<image_crop::params> params = factory.make_params(decoded);
             max_cropbox_area = params->cropbox.area();
             max_cropbox_ratio = max_cropbox_area / source_image_area;
         }
         {
             js["scale"] = {0.3, 0.3};
-            image::config           cfg{js};
-            image::extractor        extractor{cfg};
-            image::param_factory    factory(cfg);
+            image_crop::config           cfg{js};
+            image_crop::extractor        extractor{cfg};
+            image_crop::param_factory    factory(cfg);
 
             auto decoded = extractor.extract(image_data.data(), image_data.size());
 
-            shared_ptr<image::params> params = factory.make_params(decoded);
+            shared_ptr<image_crop::params> params = factory.make_params(decoded);
             float cropbox_area = params->cropbox.area();
             float cropbox_ratio = cropbox_area / source_image_area;
             EXPECT_NEAR(0.3, cropbox_ratio, 0.0001);
         }
         {
             js["scale"] = {0.8, 0.8};
-            image::config           cfg{js};
-            image::extractor        extractor{cfg};
-            image::param_factory    factory(cfg);
+            image_crop::config           cfg{js};
+            image_crop::extractor        extractor{cfg};
+            image_crop::param_factory    factory(cfg);
 
             auto decoded = extractor.extract(image_data.data(), image_data.size());
 
-            shared_ptr<image::params> params = factory.make_params(decoded);
+            shared_ptr<image_crop::params> params = factory.make_params(decoded);
             float cropbox_area = params->cropbox.area();
             float cropbox_ratio = cropbox_area / source_image_area;
             EXPECT_FLOAT_EQ(max_cropbox_ratio, cropbox_ratio);

@@ -23,7 +23,7 @@
 #include "image.hpp"
 
 namespace nervana {
-    namespace image {
+    namespace image_crop {
         class config;
         class params;
         class decoded;
@@ -42,8 +42,8 @@ namespace nervana {
         class config;     // Forward decl for friending
     }
 
-    class image::params : public nervana::interface::params {
-        friend class image::param_factory;
+    class image_crop::params : public nervana::interface::params {
+        friend class image_crop::param_factory;
     public:
 
         void dump(std::ostream & = std::cout);
@@ -60,12 +60,12 @@ namespace nervana {
     };
 
     /**
-     * \brief Configuration for image ETL
+     * \brief Configuration for image_crop ETL
      *
-     * An instantiation of this class controls the ETL of image data into the
+     * An instantiation of this class controls the ETL of image_crop data into the
      * target memory buffers from the source CPIO archives.
      */
-    class image::config : public interface::config {
+    class image_crop::config : public interface::config {
         friend class video::config;
         friend class multicrop::config;
     public:
@@ -127,9 +127,9 @@ namespace nervana {
         bool                                  center = true;
     };
 
-    class image::param_factory : public interface::param_factory<image::decoded, image::params> {
+    class image_crop::param_factory : public interface::param_factory<image_crop::decoded, image_crop::params> {
     public:
-        param_factory(image::config& cfg) : _cfg{cfg}, _dre{0}
+        param_factory(image_crop::config& cfg) : _cfg{cfg}, _dre{0}
         {
             // A positive provided seed means to run deterministic with that seed
             if (_cfg.seed >= 0) {
@@ -140,10 +140,10 @@ namespace nervana {
         }
         virtual ~param_factory() {}
 
-        std::shared_ptr<image::params> make_params(std::shared_ptr<const image::decoded> input);
+        std::shared_ptr<image_crop::params> make_params(std::shared_ptr<const image_crop::decoded> input);
     private:
 
-        image::config& _cfg;
+        image_crop::config& _cfg;
         std::default_random_engine _dre;
     };
 
@@ -151,7 +151,7 @@ namespace nervana {
 // Decoded
 // ===============================================================================================
 
-    class image::decoded : public interface::decoded_media {
+    class image_crop::decoded : public interface::decoded_media {
     public:
         decoded() {}
         decoded(cv::Mat img) { _images.push_back(img); }
@@ -187,11 +187,11 @@ namespace nervana {
 
 
 
-    class image::extractor : public interface::extractor<image::decoded> {
+    class image_crop::extractor : public interface::extractor<image_crop::decoded> {
     public:
-        extractor(const image::config&);
+        extractor(const image_crop::config&);
         ~extractor() {}
-        virtual std::shared_ptr<image::decoded> extract(const char*, int) override;
+        virtual std::shared_ptr<image_crop::decoded> extract(const char*, int) override;
 
         const int get_channel_count() {return _color_mode == CV_LOAD_IMAGE_COLOR ? 3 : 1;}
     private:
@@ -200,28 +200,28 @@ namespace nervana {
     };
 
 
-    class image::transformer : public interface::transformer<image::decoded, image::params> {
+    class image_crop::transformer : public interface::transformer<image_crop::decoded, image_crop::params> {
     public:
-        transformer(const image::config&);
+        transformer(const image_crop::config&);
         ~transformer() {}
-        virtual std::shared_ptr<image::decoded> transform(
-                                                std::shared_ptr<image::params>,
-                                                std::shared_ptr<image::decoded>) override;
+        virtual std::shared_ptr<image_crop::decoded> transform(
+                                                std::shared_ptr<image_crop::params>,
+                                                std::shared_ptr<image_crop::decoded>) override;
 
-        cv::Mat transform_single_image(std::shared_ptr<image::params>, cv::Mat&);
+        cv::Mat transform_single_image(std::shared_ptr<image_crop::params>, cv::Mat&);
     private:
-        photometric photo;
+        image::photometric photo;
     };
 
 
-    class image::loader : public interface::loader<image::decoded> {
+    class image_crop::loader : public interface::loader<image_crop::decoded> {
     public:
-        loader(const image::config& cfg) : _cfg{cfg} {}
+        loader(const image_crop::config& cfg) : _cfg{cfg} {}
         ~loader() {}
-        virtual void load(const std::vector<void*>&, std::shared_ptr<image::decoded>) override;
+        virtual void load(const std::vector<void*>&, std::shared_ptr<image_crop::decoded>) override;
 
     private:
-        const image::config& _cfg;
+        const image_crop::config& _cfg;
         void split(cv::Mat&, char*);
     };
 }

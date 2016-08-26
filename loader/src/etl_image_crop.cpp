@@ -18,7 +18,7 @@
 using namespace std;
 using namespace nervana;
 
-image::config::config(nlohmann::json js)
+image_crop::config::config(nlohmann::json js)
 {
     if(js.is_null()) {
         throw std::runtime_error("missing image config in json config");
@@ -49,7 +49,7 @@ image::config::config(nlohmann::json js)
     validate();
 }
 
-void image::config::validate() {
+void image_crop::config::validate() {
     if(crop_offset.param().a() > crop_offset.param().b()) {
         throw std::invalid_argument("invalid crop_offset");
     }
@@ -61,7 +61,7 @@ void image::config::validate() {
     }
 }
 
-void image::params::dump(ostream & ostr)
+void image_crop::params::dump(ostream & ostr)
 {
     ostr << "Angle: " << setw(3) << angle << " ";
     ostr << "Flip: " << flip << " ";
@@ -74,7 +74,7 @@ void image::params::dump(ostream & ostr)
 
 
 /* Extract */
-image::extractor::extractor(const image::config& cfg)
+image_crop::extractor::extractor(const image_crop::config& cfg)
 {
     if (!(cfg.channels == 1 || cfg.channels == 3))
     {
@@ -87,7 +87,7 @@ image::extractor::extractor(const image::config& cfg)
     }
 }
 
-shared_ptr<image::decoded> image::extractor::extract(const char* inbuf, int insize)
+shared_ptr<image_crop::decoded> image_crop::extractor::extract(const char* inbuf, int insize)
 {
     cv::Mat output_img;
 
@@ -96,14 +96,14 @@ shared_ptr<image::decoded> image::extractor::extract(const char* inbuf, int insi
     cv::Mat input_img(1, insize, _pixel_type, const_cast<char*>(inbuf));
     cv::imdecode(input_img, _color_mode, &output_img);
 
-    auto rc = make_shared<image::decoded>();
+    auto rc = make_shared<image_crop::decoded>();
     rc->add(output_img);    // don't need to check return for single image
     return rc;
 }
 
 
 /* Transform:
-    image::config will be a supplied bunch of params used by this provider.
+    image_crop::config will be a supplied bunch of params used by this provider.
     on each record, the transformer will use the config along with the supplied
     record to fill a transform_params structure which will have
 
@@ -117,28 +117,28 @@ shared_ptr<image::decoded> image::extractor::extract(const char* inbuf, int insi
 
 */
 
-image::transformer::transformer(const image::config&)
+image_crop::transformer::transformer(const image_crop::config&)
 {
 }
 
-shared_ptr<image::decoded> image::transformer::transform(
-                                                 shared_ptr<image::params> img_xform,
-                                                 shared_ptr<image::decoded> img)
+shared_ptr<image_crop::decoded> image_crop::transformer::transform(
+                                                 shared_ptr<image_crop::params> img_xform,
+                                                 shared_ptr<image_crop::decoded> img)
 {
     vector<cv::Mat> finalImageList;
     for(int i=0; i<img->get_image_count(); i++) {
         finalImageList.push_back(transform_single_image(img_xform, img->get_image(i)));
     }
 
-    auto rc = make_shared<image::decoded>();
+    auto rc = make_shared<image_crop::decoded>();
     if(rc->add(finalImageList) == false) {
         rc = nullptr;
     }
     return rc;
 }
 
-cv::Mat image::transformer::transform_single_image(
-                                            shared_ptr<image::params> img_xform,
+cv::Mat image_crop::transformer::transform_single_image(
+                                            shared_ptr<image_crop::params> img_xform,
                                             cv::Mat& single_img)
 {
     cv::Mat rotatedImage;
@@ -159,13 +159,13 @@ cv::Mat image::transformer::transform_single_image(
     return *finalImage;
 }
 
-shared_ptr<image::params>
-image::param_factory::make_params(shared_ptr<const decoded> input)
+shared_ptr<image_crop::params>
+image_crop::param_factory::make_params(shared_ptr<const decoded> input)
 {
     // Must use this method for creating a shared_ptr rather than make_shared
     // since the params default ctor is private and factory is friend
     // make_shared is not friend :(
-    auto settings = shared_ptr<image::params>(new image::params());
+    auto settings = shared_ptr<image_crop::params>(new image_crop::params());
 
     settings->output_size = cv::Size2i(_cfg.width, _cfg.height);
 
@@ -178,17 +178,17 @@ image::param_factory::make_params(shared_ptr<const decoded> input)
     float horizontal_distortion = _cfg.horizontal_distortion(_dre);
     cv::Size2f out_shape(_cfg.width * horizontal_distortion, _cfg.height);
 
-    cv::Size2f cropbox_size = cropbox_max_proportional(in_size, out_shape);
+    cv::Size2f cropbox_size = image::cropbox_max_proportional(in_size, out_shape);
     if(_cfg.do_area_scale) {
-        cropbox_size = cropbox_area_scale(in_size, cropbox_size, scale);
+        cropbox_size = image::cropbox_area_scale(in_size, cropbox_size, scale);
     } else {
-        cropbox_size = cropbox_linear_scale(cropbox_size, scale);
+        cropbox_size = image::cropbox_linear_scale(cropbox_size, scale);
     }
 
     float c_off_x = _cfg.crop_offset(_dre);
     float c_off_y = _cfg.crop_offset(_dre);
 
-    cv::Point2f cropbox_origin = cropbox_shift(in_size, cropbox_size, c_off_x, c_off_y);
+    cv::Point2f cropbox_origin = image::cropbox_shift(in_size, cropbox_size, c_off_x, c_off_y);
     settings->cropbox = cv::Rect(cropbox_origin, cropbox_size);
 
     if (_cfg.lighting.stddev() != 0) {
@@ -205,7 +205,7 @@ image::param_factory::make_params(shared_ptr<const decoded> input)
     return settings;
 }
 
-void image::loader::load(const std::vector<void*>& outlist, shared_ptr<image::decoded> input)
+void image_crop::loader::load(const std::vector<void*>& outlist, shared_ptr<image_crop::decoded> input)
 {
     char* outbuf = (char*)outlist[0];
     // TODO: Generalize this to also handle multi_crop case
@@ -239,7 +239,7 @@ void image::loader::load(const std::vector<void*>& outlist, shared_ptr<image::de
     }
 }
 
-void image::loader::split(cv::Mat& img, char* buf)
+void image_crop::loader::split(cv::Mat& img, char* buf)
 {
     // split `img` into individual channels so that buf is in c
     int pix_per_channel = img.total();

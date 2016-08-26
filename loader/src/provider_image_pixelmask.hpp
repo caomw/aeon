@@ -27,15 +27,15 @@ namespace nervana {
         void provide(int idx, buffer_in_array& in_buf, buffer_out_array& out_buf);
 
     private:
-        image::config               image_config;
-        image::config               target_config;
-        image::extractor            image_extractor;
-        image::transformer          image_transformer;
-        image::loader               image_loader;
-        image::param_factory        image_factory;
+        image_crop::config          image_config;
+        image_crop::config          target_config;
+        image_crop::extractor       image_extractor;
+        image_crop::transformer     image_transformer;
+        image_crop::loader          image_loader;
+        image_crop::param_factory   image_factory;
 
         pixel_mask::extractor       target_extractor;
         pixel_mask::transformer     target_transformer;
-        image::loader               target_loader;
+        image_crop::loader          target_loader;
     };
 }

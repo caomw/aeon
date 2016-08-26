@@ -80,8 +80,8 @@ TEST(provider, argtype) {
         /* Create extractor with default num channels param */
         string cfgString = "{\"height\":10, \"width\":10}";
         auto js = nlohmann::json::parse(cfgString);
-        image::config cfg{js};
-        auto ic = make_shared<image::extractor>(cfg);
+        image_crop::config cfg{js};
+        auto ic = make_shared<image_crop::extractor>(cfg);
         EXPECT_EQ(ic->get_channel_count(), 3);
     }
 
@@ -100,7 +100,7 @@ TEST(provider, argtype) {
         )";
 
 
-        image::config itpj(nlohmann::json::parse(cfgString));
+        image_crop::config itpj(nlohmann::json::parse(cfgString));
 
         // output the fixed parameters
         EXPECT_EQ(30,itpj.height);
@@ -108,10 +108,10 @@ TEST(provider, argtype) {
 
         // output the random parameters
         default_random_engine r_eng(0);
-        image::param_factory img_prm_maker(itpj);
-        auto imgt = make_shared<image::transformer>(itpj);
+        image_crop::param_factory img_prm_maker(itpj);
+        auto imgt = make_shared<image_crop::transformer>(itpj);
 
-        auto input_img_ptr = make_shared<image::decoded>(cv::Mat(256, 320, CV_8UC3));
+        auto input_img_ptr = make_shared<image_crop::decoded>(cv::Mat(256, 320, CV_8UC3));
 
         auto its = img_prm_maker.make_params(input_img_ptr);
     }

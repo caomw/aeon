@@ -24,7 +24,7 @@
 
 
 namespace nervana {
-    namespace image_var {
+    namespace image_full {
         class config;
         class params;
         class decoded;
@@ -36,8 +36,8 @@ namespace nervana {
         class loader;
     }
 
-    class image_var::params : public nervana::interface::params {
-        friend class image_var::param_factory;
+    class image_full::params : public nervana::interface::params {
+        friend class image_full::param_factory;
     public:
         void dump(std::ostream & = std::cout);
 
@@ -53,7 +53,7 @@ namespace nervana {
         params() {}
     };
 
-    class image_var::config : public interface::config {
+    class image_full::config : public interface::config {
     public:
         size_t                                min_size;
         size_t                                max_size;
@@ -111,9 +111,9 @@ namespace nervana {
         bool                                  center = true;
     };
 
-    class image_var::param_factory : public interface::param_factory<image_var::decoded, image_var::params> {
+    class image_full::param_factory : public interface::param_factory<image_full::decoded, image_full::params> {
     public:
-        param_factory(image_var::config& cfg) :
+        param_factory(image_full::config& cfg) :
             config{cfg},
             generator{0}
         {
@@ -127,10 +127,10 @@ namespace nervana {
 
         virtual ~param_factory() {}
 
-        std::shared_ptr<image_var::params> make_params(std::shared_ptr<const decoded>);
+        std::shared_ptr<image_full::params> make_params(std::shared_ptr<const decoded>);
     private:
 
-        image_var::config&         config;
+        image_full::config&         config;
         std::default_random_engine generator;
     };
 
@@ -138,7 +138,7 @@ namespace nervana {
 // Decoded
 // ===============================================================================================
 
-    class image_var::decoded : public interface::decoded_media {
+    class image_full::decoded : public interface::decoded_media {
     public:
         decoded() {}
         decoded(cv::Mat img) : image{img} {}
@@ -152,11 +152,11 @@ namespace nervana {
         cv::Mat image;
     };
 
-    class image_var::extractor : public interface::extractor<image_var::decoded> {
+    class image_full::extractor : public interface::extractor<image_full::decoded> {
     public:
-        extractor(const image_var::config&);
+        extractor(const image_full::config&);
         virtual ~extractor() {}
-        virtual std::shared_ptr<image_var::decoded> extract(const char*, int) override;
+        virtual std::shared_ptr<image_full::decoded> extract(const char*, int) override;
 
         const int get_channel_count() {return color_mode == CV_LOAD_IMAGE_COLOR ? 3 : 1;}
         void resize(const cv::Mat& input, cv::Mat& output, const cv::Size2i& size);
@@ -165,24 +165,24 @@ namespace nervana {
         int color_mode;
     };
 
-    class image_var::transformer : public interface::transformer<image_var::decoded, image_var::params> {
+    class image_full::transformer : public interface::transformer<image_full::decoded, image_full::params> {
     public:
-        transformer(const image_var::config&);
+        transformer(const image_full::config&);
         ~transformer() {}
-        virtual std::shared_ptr<image_var::decoded> transform(
-                                                std::shared_ptr<image_var::params>,
-                                                std::shared_ptr<image_var::decoded>) override;
+        virtual std::shared_ptr<image_full::decoded> transform(
+                                                std::shared_ptr<image_full::params>,
+                                                std::shared_ptr<image_full::decoded>) override;
 
     private:
         size_t min_size;
         size_t max_size;
     };
 
-    class image_var::loader : public interface::loader<image_var::decoded> {
+    class image_full::loader : public interface::loader<image_full::decoded> {
     public:
-        loader(const image_var::config&);
+        loader(const image_full::config&);
         virtual ~loader() {}
-        virtual void load(const std::vector<void*>&, std::shared_ptr<image_var::decoded>) override;
+        virtual void load(const std::vector<void*>&, std::shared_ptr<image_full::decoded>) override;
 
     private:
         bool                channel_major;

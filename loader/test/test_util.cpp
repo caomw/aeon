@@ -304,8 +304,8 @@ TEST(util,param_dump) {
     DUMP_CONFIG(audio);
     DUMP_CONFIG(boundingbox);
     DUMP_CONFIG(char_map);
-    DUMP_CONFIG(image);
-    DUMP_CONFIG(image_var);
+    DUMP_CONFIG(image_crop);
+    DUMP_CONFIG(image_full);
     DUMP_CONFIG(label);
     DUMP_CONFIG(label_map);
     DUMP_CONFIG(localization);

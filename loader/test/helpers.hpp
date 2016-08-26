@@ -31,7 +31,7 @@ std::vector<char> read_file_contents(const std::string& path);
 
 class image_params_builder {
 public:
-    image_params_builder(std::shared_ptr<nervana::image::params> _obj) { obj = _obj; }
+    image_params_builder(std::shared_ptr<nervana::image_crop::params> _obj) { obj = _obj; }
 
     image_params_builder& cropbox( int x, int y, int w, int h ) { obj->cropbox = cv::Rect(x,y,w,h); return *this; }
     image_params_builder& output_size( int w, int h ) { obj->output_size = cv::Size2i(w,h); return *this; }
@@ -41,10 +41,10 @@ public:
     image_params_builder& color_noise_std(float f) { obj->color_noise_std = f; return *this; }
     image_params_builder& photometric( float f1, float f2, float f3 ) { obj->photometric = {f1,f2,f3}; return *this; }
 
-    operator std::shared_ptr<nervana::image::params>() const {
+    operator std::shared_ptr<nervana::image_crop::params>() const {
         return obj;
     }
 
 private:
-    std::shared_ptr<nervana::image::params> obj;
+    std::shared_ptr<nervana::image_crop::params> obj;
 };

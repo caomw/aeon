@@ -19,7 +19,7 @@
 using namespace std;
 using namespace nervana;
 
-localization::config::config(nlohmann::json js, const image_var::config& iconfig) :
+localization::config::config(nlohmann::json js, const image_full::config& iconfig) :
     min_size{iconfig.min_size},
     max_size{iconfig.max_size}
 {
@@ -84,7 +84,7 @@ localization::transformer::transformer(const localization::config& _cfg) :
 }
 
 shared_ptr<localization::decoded> localization::transformer::transform(
-                    shared_ptr<image_var::params> settings,
+                    shared_ptr<image_full::params> settings,
                     shared_ptr<localization::decoded> mp)
 {
     cv::Size im_size{mp->width(), mp->height()};

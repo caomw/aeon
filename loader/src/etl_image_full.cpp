@@ -19,16 +19,16 @@
 using namespace std;
 using namespace nervana;
 
-image_var::config::config(nlohmann::json js)
+image_full::config::config(nlohmann::json js)
 {
     if(js.is_null()) {
-        throw std::runtime_error("missing image_var config in json config");
+        throw std::runtime_error("missing image_full config in json config");
     }
 
     for(auto& info : config_list) {
         info->parse(js);
     }
-    verify_config("image_var", config_list, js);
+    verify_config("image_full", config_list, js);
 
     // Now fill in derived
     shape_t shape;
@@ -50,20 +50,20 @@ image_var::config::config(nlohmann::json js)
     validate();
 }
 
-void image_var::config::validate() {
+void image_full::config::validate() {
     if(max_size < min_size) {
         throw std::invalid_argument("max_size must be greater than or equal to min_size");
     }
 }
 
-void image_var::params::dump(ostream & ostr)
+void image_full::params::dump(ostream & ostr)
 {
     ostr << "Flip: " << flip << "\n";
 }
 
 
 /* Extract */
-image_var::extractor::extractor(const image_var::config& cfg)
+image_full::extractor::extractor(const image_full::config& cfg)
 {
     if (!(cfg.channels == 1 || cfg.channels == 3))
     {
@@ -76,7 +76,7 @@ image_var::extractor::extractor(const image_var::config& cfg)
     }
 }
 
-shared_ptr<image_var::decoded> image_var::extractor::extract(const char* inbuf, int insize)
+shared_ptr<image_full::decoded> image_full::extractor::extract(const char* inbuf, int insize)
 {
     cv::Mat output_img;
 
@@ -85,7 +85,7 @@ shared_ptr<image_var::decoded> image_var::extractor::extract(const char* inbuf, 
     cv::Mat input_img(1, insize, pixel_type, const_cast<char*>(inbuf));
     cv::imdecode(input_img, color_mode, &output_img);
 
-    return make_shared<image_var::decoded>(output_img);
+    return make_shared<image_full::decoded>(output_img);
 }
 
 
@@ -99,15 +99,15 @@ shared_ptr<image_var::decoded> image_var::extractor::extract(const char* inbuf, 
 
 */
 
-image_var::transformer::transformer(const image_var::config& cfg) :
+image_full::transformer::transformer(const image_full::config& cfg) :
     min_size{cfg.min_size},
     max_size{cfg.max_size}
 {
 }
 
-shared_ptr<image_var::decoded> image_var::transformer::transform(
-                                                 shared_ptr<image_var::params> img_xform,
-                                                 shared_ptr<image_var::decoded> img)
+shared_ptr<image_full::decoded> image_full::transformer::transform(
+                                                 shared_ptr<image_full::params> img_xform,
+                                                 shared_ptr<image_full::decoded> img)
 {
     cv::Mat image = img->get_image();
     cv::Mat output;
@@ -124,17 +124,17 @@ shared_ptr<image_var::decoded> image_var::transformer::transform(
         output = flippedImage;
     }
 
-    auto rc = make_shared<image_var::decoded>(output);
+    auto rc = make_shared<image_full::decoded>(output);
     return rc;
 }
 
-shared_ptr<image_var::params>
-image_var::param_factory::make_params(shared_ptr<const decoded> input)
+shared_ptr<image_full::params>
+image_full::param_factory::make_params(shared_ptr<const decoded> input)
 {
     // Must use this method for creating a shared_ptr rather than make_shared
     // since the params default ctor is private and factory is friend
     // make_shared is not friend :(
-    auto params = shared_ptr<image_var::params>(new image_var::params());
+    auto params = shared_ptr<image_full::params>(new image_full::params());
 
     params->flip  = config.flip_distribution(generator);
     params->output_size = input->get_image_size();
@@ -143,13 +143,13 @@ image_var::param_factory::make_params(shared_ptr<const decoded> input)
     return params;
 }
 
-image_var::loader::loader(const image_var::config& cfg) :
+image_full::loader::loader(const image_full::config& cfg) :
     channel_major{cfg.channel_major},
     stype{cfg.get_shape_type()}
 {
 }
 
-void image_var::loader::load(const vector<void*>& outlist, shared_ptr<image_var::decoded> input)
+void image_full::loader::load(const vector<void*>& outlist, shared_ptr<image_full::decoded> input)
 {
     char* outbuf = (char*)outlist[0];
     auto img = input->get_image();

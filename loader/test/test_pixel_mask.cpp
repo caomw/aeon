@@ -71,17 +71,17 @@ TEST(pixel_mask, scale_up) {
     ASSERT_TRUE(verify_image(test_image));
 
     nlohmann::json js = {{"width", 256},{"height",256}};
-    image::config cfg(js);
+    image_crop::config cfg(js);
 
     pixel_mask::extractor   extractor{cfg};
     pixel_mask::transformer transformer{cfg};
-    image::loader           loader{cfg};
-    image::param_factory    factory{cfg};
+    image_crop::loader           loader{cfg};
+    image_crop::param_factory    factory{cfg};
 
     auto extracted = extractor.extract((const char*)test_data.data(), test_data.size());
     image_params_builder builder(factory.make_params(extracted));
-    shared_ptr<image::params> params_ptr = builder.output_size(300, 300);
-    shared_ptr<image::decoded> transformed = transformer.transform(params_ptr, extracted);
+    shared_ptr<image_crop::params> params_ptr = builder.output_size(300, 300);
+    shared_ptr<image_crop::decoded> transformed = transformer.transform(params_ptr, extracted);
     cv::Mat tximg = transformed->get_image(0);
     cv::imwrite("tx_pixel_mask_scale_up.png",tximg);
     EXPECT_TRUE(verify_image(tximg));
@@ -94,17 +94,17 @@ TEST(pixel_mask, scale_down) {
     ASSERT_TRUE(verify_image(test_image));
 
     nlohmann::json js = {{"width", 256},{"height",256}};
-    image::config cfg(js);
+    image_crop::config cfg(js);
 
     pixel_mask::extractor   extractor{cfg};
     pixel_mask::transformer transformer{cfg};
-    image::loader           loader{cfg};
-    image::param_factory    factory{cfg};
+    image_crop::loader           loader{cfg};
+    image_crop::param_factory    factory{cfg};
 
     auto extracted = extractor.extract((const char*)test_data.data(), test_data.size());
     image_params_builder builder(factory.make_params(extracted));
-    shared_ptr<image::params> params_ptr = builder.output_size(100, 100);
-    shared_ptr<image::decoded> transformed = transformer.transform(params_ptr, extracted);
+    shared_ptr<image_crop::params> params_ptr = builder.output_size(100, 100);
+    shared_ptr<image_crop::decoded> transformed = transformer.transform(params_ptr, extracted);
     cv::Mat tximg = transformed->get_image(0);
     cv::imwrite("tx_pixel_mask_scale_down.png",tximg);
     EXPECT_TRUE(verify_image(tximg));
@@ -117,17 +117,17 @@ TEST(pixel_mask, rotate) {
     ASSERT_TRUE(verify_image(test_image));
 
     nlohmann::json js = {{"width", 256},{"height",256}};
-    image::config cfg(js);
+    image_crop::config cfg(js);
 
-    pixel_mask::extractor   extractor{cfg};
-    pixel_mask::transformer transformer{cfg};
-    image::loader           loader{cfg};
-    image::param_factory    factory{cfg};
+    pixel_mask::extractor        extractor{cfg};
+    pixel_mask::transformer      transformer{cfg};
+    image_crop::loader           loader{cfg};
+    image_crop::param_factory    factory{cfg};
 
     auto extracted = extractor.extract((const char*)test_data.data(), test_data.size());
     image_params_builder builder(factory.make_params(extracted));
-    shared_ptr<image::params> params_ptr = builder.angle(45);
-    shared_ptr<image::decoded> transformed = transformer.transform(params_ptr, extracted);
+    shared_ptr<image_crop::params> params_ptr = builder.angle(45);
+    shared_ptr<image_crop::decoded> transformed = transformer.transform(params_ptr, extracted);
     cv::Mat tximg = transformed->get_image(0);
     cv::imwrite("tx_pixel_mask_rotate.png",tximg);
     EXPECT_TRUE(verify_image(tximg));
@@ -157,17 +157,17 @@ TEST(pixel_mask, load_int) {
         {"type_string", "int32_t"},
         {"channels", 1}
     };
-    image::config cfg(js);
+    image_crop::config cfg(js);
 
-    pixel_mask::extractor   extractor{cfg};
-    pixel_mask::transformer transformer{cfg};
-    image::loader           loader{cfg};
-    image::param_factory    factory{cfg};
+    pixel_mask::extractor       extractor{cfg};
+    pixel_mask::transformer     transformer{cfg};
+    image_crop::loader          loader{cfg};
+    image_crop::param_factory   factory{cfg};
 
     auto extracted = extractor.extract((const char*)test_data.data(), test_data.size());
     image_params_builder builder(factory.make_params(extracted));
-    shared_ptr<image::params> params_ptr = builder;
-    shared_ptr<image::decoded> transformed = transformer.transform(params_ptr, extracted);
+    shared_ptr<image_crop::params> params_ptr = builder;
+    shared_ptr<image_crop::decoded> transformed = transformer.transform(params_ptr, extracted);
     cv::Mat tximg = transformed->get_image(0);
 
     cv::Mat output_image(256, 256, CV_32SC1);

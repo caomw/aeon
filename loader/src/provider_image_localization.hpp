@@ -26,13 +26,13 @@ namespace nervana {
         void provide(int idx, buffer_in_array& in_buf, buffer_out_array& out_buf);
 
     private:
-        image_var::config           image_config;
+        image_full::config           image_config;
         localization::config        localization_config;
 
-        image_var::extractor        image_extractor;
-        image_var::transformer      image_transformer;
-        image_var::loader           image_loader;
-        image_var::param_factory    image_factory;
+        image_full::extractor        image_extractor;
+        image_full::transformer      image_transformer;
+        image_full::loader           image_loader;
+        image_full::param_factory    image_factory;
 
         localization::extractor     localization_extractor;
         localization::transformer   localization_transformer;

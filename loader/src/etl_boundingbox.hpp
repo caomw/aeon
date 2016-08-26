@@ -110,12 +110,12 @@ private:
     std::unordered_map<std::string,int> label_map;
 };
 
-class nervana::boundingbox::transformer : public nervana::interface::transformer<nervana::boundingbox::decoded, nervana::image::params> {
+class nervana::boundingbox::transformer : public nervana::interface::transformer<nervana::boundingbox::decoded, nervana::image_crop::params> {
 public:
     transformer(const boundingbox::config&);
     virtual ~transformer(){}
     virtual std::shared_ptr<boundingbox::decoded> transform(
-                                            std::shared_ptr<image::params>,
+                                            std::shared_ptr<image_crop::params>,
                                             std::shared_ptr<boundingbox::decoded>) override;
 
     static std::vector<boundingbox::box> transform_box( const std::vector<boundingbox::box>& b, const cv::Rect& crop, bool flip, float x_scale, float y_scale);
