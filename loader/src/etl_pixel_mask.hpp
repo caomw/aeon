@@ -16,7 +16,7 @@
 #pragma once
 
 #include "interface.hpp"
-#include "etl_image.hpp"
+#include "etl_image_crop.hpp"
 #include "util.hpp"
 
 namespace nervana {

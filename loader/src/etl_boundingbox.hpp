@@ -19,7 +19,7 @@
 #include <unordered_map>
 
 #include "interface.hpp"
-#include "etl_image.hpp"
+#include "etl_image_crop.hpp"
 #include "json.hpp"
 #include "box.hpp"
 

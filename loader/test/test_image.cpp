@@ -24,7 +24,7 @@
 
 #include "gtest/gtest.h"
 
-#include "etl_image.hpp"
+#include "etl_image_crop.hpp"
 #include "etl_multicrop.hpp"
 #include "json.hpp"
 #include "helpers.hpp"

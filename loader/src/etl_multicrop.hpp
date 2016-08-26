@@ -20,7 +20,7 @@
 #include <opencv2/highgui/highgui.hpp>
 
 #include "interface.hpp"
-#include "etl_image.hpp"
+#include "etl_image_crop.hpp"
 
 namespace nervana {
 

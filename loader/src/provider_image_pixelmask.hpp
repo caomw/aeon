@@ -16,7 +16,7 @@
 #pragma once
 
 #include "provider_interface.hpp"
-#include "etl_image.hpp"
+#include "etl_image_crop.hpp"
 #include "etl_pixel_mask.hpp"
 
 namespace nervana {

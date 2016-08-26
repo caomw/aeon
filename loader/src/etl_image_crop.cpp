@@ -13,7 +13,7 @@
  limitations under the License.
 */
 
-#include "etl_image.hpp"
+#include "etl_image_crop.hpp"
 
 using namespace std;
 using namespace nervana;

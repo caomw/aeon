@@ -28,7 +28,7 @@
 
 #define private public
 
-#include "etl_image_var.hpp"
+#include "etl_image_full.hpp"
 #include "etl_localization.hpp"
 #include "json.hpp"
 #include "provider_factory.hpp"

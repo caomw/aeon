@@ -16,7 +16,7 @@
 #pragma once
 
 #include "provider_interface.hpp"
-#include "etl_image.hpp"
+#include "etl_image_crop.hpp"
 
 namespace nervana {
     class image_only : public provider_interface {

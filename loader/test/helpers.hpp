@@ -19,7 +19,7 @@
 #include <string>
 
 #include "buffer_in.hpp"
-#include "etl_image.hpp"
+#include "etl_image_crop.hpp"
 
 std::vector<std::string> buffer_to_vector_of_strings(nervana::buffer_in& b);
 bool sorted(std::vector<std::string> words);

@@ -21,7 +21,7 @@
 
 #include "interface.hpp"
 #include "etl_boundingbox.hpp"
-#include "etl_image_var.hpp"
+#include "etl_image_full.hpp"
 #include "util.hpp"
 #include "box.hpp"
 

@@ -26,7 +26,7 @@
 
 #define private public
 
-#include "etl_image_var.hpp"
+#include "etl_image_full.hpp"
 #include "json.hpp"
 
 using namespace std;

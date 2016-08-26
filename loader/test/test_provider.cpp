@@ -3,7 +3,7 @@
 
 #include "provider_factory.hpp"
 
-#include "etl_image.hpp"
+#include "etl_image_crop.hpp"
 #include "etl_boundingbox.hpp"
 #include "etl_label_map.hpp"
 #include "json.hpp"

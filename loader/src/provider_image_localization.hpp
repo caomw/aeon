@@ -16,7 +16,7 @@
 #pragma once
 
 #include "provider_interface.hpp"
-#include "etl_image_var.hpp"
+#include "etl_image_full.hpp"
 #include "etl_localization.hpp"
 
 namespace nervana {

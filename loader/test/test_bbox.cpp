@@ -25,7 +25,7 @@
 #define private public
 
 #include "interface.hpp"
-#include "etl_image.hpp"
+#include "etl_image_crop.hpp"
 #include "etl_label.hpp"
 #include "etl_boundingbox.hpp"
 #include "etl_label_map.hpp"

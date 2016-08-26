@@ -15,7 +15,7 @@
 
 #pragma once
 
-#include "etl_image.hpp"
+#include "etl_image_crop.hpp"
 #include "cap_mjpeg_decoder.hpp"
 
 namespace nervana {

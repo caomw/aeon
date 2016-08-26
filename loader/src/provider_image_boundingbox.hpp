@@ -17,7 +17,7 @@
 
 #include "provider_interface.hpp"
 #include "etl_boundingbox.hpp"
-#include "etl_image.hpp"
+#include "etl_image_crop.hpp"
 
 namespace nervana {
     class image_boundingbox : public provider_interface {
