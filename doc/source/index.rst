@@ -20,12 +20,12 @@ Nervana aeon
 :Release: |version|
 :Date: |today|
 
-aeon_ is Nervana_ ’s project to enable fast and flexible access to data when 
-training your neon_ neural network models. You probably want to get started 
-with :doc:`installation and getting started <getting_started>` followed by more 
+aeon_ is Nervana_ ’s project to enable fast and flexible access to data when
+training your neon_ neural network models. You probably want to get started
+with :doc:`installation and getting started <getting_started>` followed by more
 detailed :doc:`dataLoader <dataloader>` documentation.
 
-This project is evolving quickly, so feel free to send us feature requests and 
+This project is evolving quickly, so feel free to send us feature requests and
 bug reports at aeon_issues_ .
 
 .. _nervana: http://nervanasys.com
@@ -42,6 +42,7 @@ bug reports at aeon_issues_ .
    getting_started
    dataloader
    test
+   config
    faq
 
 .. toctree::
